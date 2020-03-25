@@ -4,7 +4,7 @@ const path = require('path');
 
 const app = express();
 const port = process.env.PORT || 3000;
-const apiUrls = [
+const apiUrls = [ // Allowed urls from covidtracking JSON API
     '/api/us/daily',
     '/api/us',
 ];
@@ -19,19 +19,26 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(publicDir, 'index.html'));
 });
 
+// Set up ability to get data from covidtracking, without actually requesting it every time
 apiUrls.forEach((url) => {
     app.get(url, async (req, res) => {
-        if (!cachedStats.has(url) || Date.now() - cachedStats.get(url).lastCacheTime > cacheExpiration) {
-            console.log(`Requesting ${url}...`);
-            cachedStats.set(url, {
-                lastCacheTime: Date.now(),
-                data: await request(`https://covidtracking.com${url}`, { 
-                    json: true
-                })
-            });
+        var cacheEntry = cachedStats.get(url);
+        try {
+            if (!cacheEntry || Date.now() - cacheEntry.lastCacheTime > cacheExpiration) {
+                console.log(`Requesting ${url}...`);
+                cacheEntry = {
+                    lastCacheTime: Date.now(),
+                    data: await request(`https://covidtracking.com${url}`, { 
+                        json: true
+                    })
+                };
+                cachedStats.set(url, cacheEntry);
+            }
+        } catch (e) {
+            console.error(e);
         }
 
-        res.json(cachedStats.get(url).data);
+        res.json(cacheEntry ? cacheEntry.data : null);
     });
 });
 

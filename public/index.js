@@ -17,16 +17,19 @@ function dateFromApi(number) {
 }
 
 // Pull new data from the server
-function refresh(fromUser) {
+async function refresh(fromUser) {
     // Signal to the user that we are refreshing
     $('#refreshButton').prop('disabled', true);
 
-    $.getJSON('/api/us/daily', (response) => {
+    let responses = await Promise.all([$.getJSON('/api/us/daily'), $.getJSON('/api/us')]);
+
+    // Populate graph
+    if (responses[0]) {
         let positive = [];
         let negative = [];
         let total = [];
-
-        response.forEach((dataPoint) => {
+    
+        responses[0].forEach((dataPoint) => {
             if (dataPoint) {
                 let date = dateFromApi(dataPoint.date);
                 if (date) {
@@ -46,7 +49,7 @@ function refresh(fromUser) {
                 }
             }
         });
-
+    
         if (!chart) {
             chart = new Chart($('#myChart'), {
                 type: "line",
@@ -119,26 +122,24 @@ function refresh(fromUser) {
             chart.data.datasets[1].data = negative;
             chart.update();
         }
+    }
 
-        // Grab current stats - generally the same as the latest entry in daily but maybe not
-        $.getJSON('/api/us', (response) => {
-            var firstEntry = response[0];
-            if (firstEntry) {
-                $('#positiveText').text(firstEntry.positive.toLocaleString());
-                $('#negativeText').text(firstEntry.negative.toLocaleString());
-                $('#totalText').text(firstEntry.posNeg.toLocaleString());
-            }
-        });
+    // Grab current stats - generally the same as the latest entry in daily but maybe not
+    var firstEntry = responses[1] ? responses[1][0] : null;
+    if (firstEntry) {
+        $('#positiveText').text(firstEntry.positive.toLocaleString());
+        $('#negativeText').text(firstEntry.negative.toLocaleString());
+        $('#totalText').text(firstEntry.posNeg.toLocaleString());
+    }
         
-        // We're done! Show the last updated time and re-enable refresh button.
-        var time = moment().format('h:mm:ss A');
-        $('#refreshText').text(fromUser ? `Last refreshed at ${time}` : '');
-        $('#refreshButton').prop('disabled', false);
-    });
+    // We're done! Show the last updated time and re-enable refresh button.
+    var time = moment().format('h:mm:ss A');
+    $('#refreshText').text(fromUser ? `Last refreshed at ${time}` : '');
+    $('#refreshButton').prop('disabled', false);
 }
 
 // On document loaded
-$(document).ready(() => {
-    $('#refreshButton').click(() => refresh(true));
-    refresh(false);
+$(document).ready(async () => {
+    $('#refreshButton').click(async () => refresh(true));
+    await refresh(false);
 })
