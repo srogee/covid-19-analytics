@@ -4,35 +4,37 @@ const path = require('path');
 
 const app = express();
 const port = process.env.PORT || 3000;
-const apiUrl = 'https://covidtracking.com/api/us/daily';
-const cacheExpiration = 1000 * 60 * 10; // Every 10 minutes
+const apiUrls = [
+    '/api/us/daily',
+    '/api/us',
+];
+const cacheExpiration = 1000 * 60; // Every 1 minutes
 const publicDir = path.join(__dirname, 'public');
+
+let cachedStats = new Map();
 
 app.use(express.static(publicDir));
 
-app.get('/', async (req, res) => {
+app.get('/', (req, res) => {
     res.sendFile(path.join(publicDir, 'index.html'));
 });
 
-app.get('/api/cachedStats', async (req, res) => {
-    res.json(await getStats());
+apiUrls.forEach((url) => {
+    app.get(url, async (req, res) => {
+        if (!cachedStats.has(url) || Date.now() - cachedStats.get(url).lastCacheTime > cacheExpiration) {
+            console.log(`Requesting ${url}...`);
+            cachedStats.set(url, {
+                lastCacheTime: Date.now(),
+                data: await request(`https://covidtracking.com${url}`, { 
+                    json: true
+                })
+            });
+        }
+
+        res.json(cachedStats.get(url).data);
+    });
 });
 
 app.listen(port, () => {
     console.log(`Listening on port ${port}`);
 });
-
-let stats = null;
-let lastCacheTime = null;
-
-async function getStats() {
-    if (lastCacheTime == null || Date.now() - lastCacheTime > cacheExpiration) {
-        console.log('Re-caching stats...');
-        stats = await request(apiUrl, { 
-            json: true
-        });
-        lastCacheTime = Date.now();
-    }
-
-    return stats;
-}

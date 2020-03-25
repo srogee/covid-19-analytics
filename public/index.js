@@ -1,34 +1,49 @@
+// Constants
+const timeFormat = 'MM/DD/YYYY';
+const colors = [
+    '#ffa41b',
+    '#000839',
+    '#005082',
+    '#00a8cc'
+];
+
+// Variables
 let chart = null;
 
-const timeFormat = 'MM/DD/YYYY';
-
+// Functions
 function dateFromApi(number) {
     var str = number + '';
     return new Date(str.substring(0, 4), str.substring(4, 6) - 1, str.substring(6, 8));
 }
 
+// Pull new data from the server
 function refresh(fromUser) {
+    // Signal to the user that we are refreshing
     $('#refreshButton').prop('disabled', true);
-    $.getJSON('/api/cachedStats', (response) => {
+
+    $.getJSON('/api/us/daily', (response) => {
         let positive = [];
         let negative = [];
-
-        response.forEach((dataPoint) => {
-            dataPoint.date = dateFromApi(dataPoint.date);
-        })
-        response.sort((a, b) => a.date.valueOf() - b.date.valueOf());
+        let total = [];
 
         response.forEach((dataPoint) => {
             if (dataPoint) {
-                var date = moment(dataPoint.date).format(timeFormat);
-                positive.push({
-                    t: date,
-                    y: dataPoint.positive
-                });
-                negative.push({
-                    t: date,
-                    y: dataPoint.negative
-                });
+                let date = dateFromApi(dataPoint.date);
+                if (date) {
+                    let dateStr = moment(date).format(timeFormat);
+                    positive.push({
+                        t: dateStr,
+                        y: dataPoint.positive
+                    });
+                    negative.push({
+                        t: dateStr,
+                        y: dataPoint.negative
+                    });
+                    total.push({
+                        t: dateStr,
+                        y: dataPoint.posNeg
+                    });
+                }
             }
         });
 
@@ -42,21 +57,22 @@ function refresh(fromUser) {
                             label: "Positive",
                             data: positive,
                             fill: false,
-                            borderColor: "rgb(255, 50, 50)",
+                            borderColor: colors[0],
                         },
                         {
                             label: "Negative",
                             data: negative,
                             fill: false,
-                            borderColor: "rgb(50, 50, 255)",
+                            borderColor: colors[3],
+                        },
+                        {
+                            label: "Total",
+                            data: total,
+                            fill: false
                         }
                     ]
                 },
                 options: {
-                    title: {
-                        display: true,
-                        text: 'Coronavirus Tests in the U.S.'
-                    },
                     scales: {
                         xAxes: [{
                             type: 'time',
@@ -98,19 +114,31 @@ function refresh(fromUser) {
                 }
             });
         } else {
+            // The chart's already made, just update the data so it animates
             chart.data.datasets[0].data = positive;
             chart.data.datasets[1].data = negative;
             chart.update();
         }
+
+        // Grab current stats - generally the same as the latest entry in daily but maybe not
+        $.getJSON('/api/us', (response) => {
+            var firstEntry = response[0];
+            if (firstEntry) {
+                $('#positiveText').text(firstEntry.positive.toLocaleString());
+                $('#negativeText').text(firstEntry.negative.toLocaleString());
+                $('#totalText').text(firstEntry.posNeg.toLocaleString());
+            }
+        });
         
+        // We're done! Show the last updated time and re-enable refresh button.
         var time = moment().format('h:mm:ss A');
-        $('#refreshButton').text(fromUser ? `Refresh (${time})` : 'Refresh');
+        $('#refreshText').text(fromUser ? `Last refreshed at ${time}` : '');
         $('#refreshButton').prop('disabled', false);
     });
 }
 
-refresh(false);
-
+// On document loaded
 $(document).ready(() => {
     $('#refreshButton').click(() => refresh(true));
+    refresh(false);
 })

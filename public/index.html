@@ -1,16 +1,70 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>COVID-19 Daily Statistics</title>
-        <link rel="stylesheet" href="bootstrap.min.css">
-    </head>
-    <body>
-        <script src="jquery-3.4.1.min.js"></script>
-        <script src="moment.js"></script>
-        <script src="Chart.min.js"></script>
-        <script src="bootstrap.min.js"></script>
+
+<head>
+    <title>U.S. COVID-19 Test Results</title>
+    <meta name="author" content="Joe Sorgea">
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+    <script src="jquery-3.4.1.min.js"></script>
+    <script src="moment.js"></script>
+    <script src="Chart.min.js"></script>
+    <script src="bootstrap.min.js"></script>
+    <script src="index.js"></script>
+
+    <div class="container">
+        <h3 class="mt-4">U.S. COVID-19 Test Results</h3>
+        <hr>
         <canvas id="myChart"></canvas>
-        <button type="button" class="btn btn-primary btn-lg" id="refreshButton">Refresh</button>
-        <script src="index.js"></script>
-    </body>
+        <hr>
+        <div class="row">
+            <div class="col d-flex justify-content-center">
+                <div class="d-flex align-items-end">
+                    <h1 class="display-3" id="positiveText">0</h1>
+                    <p class="ml-1 text-muted">positive</p>
+                </div>
+            </div>
+            <div class="col d-flex justify-content-center">
+                <div class="d-flex align-items-end">
+                    <h1 class="display-3" id="negativeText">0</h1>
+                    <p class="ml-1 text-muted">positive</p>
+                </div>
+            </div>
+            <div class="col d-flex justify-content-center">
+                <div class="d-flex align-items-end">
+                    <h1 class="display-3" id="totalText">0</h1>
+                    <p class="ml-1 text-muted">positive</p>
+                </div>
+            </div>
+        </div>
+        <hr>
+
+        <div class="row">
+            <div class="col d-flex justify-content-center">
+                <div>
+                    <div class="row">
+                        <div class="col d-flex justify-content-center">
+                            <button type="button" class="btn btn-primary btn-lg" id="refreshButton">Refresh</button>
+                        </div> 
+                    </div>
+                    <div class="row">
+                        <div class="col d-flex justify-content-center">
+                            <p id="refreshText" class="text-muted"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container text-center">
+          <span class="text-muted">&copy; 2020 Joe Sorgea. Data pulled from covidtracking.com.</span>
+        </div>
+    </footer>
+</body>
+
 </html>
