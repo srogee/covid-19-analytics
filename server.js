@@ -7,6 +7,9 @@ const port = process.env.PORT || 3000;
 const apiUrls = [ // Allowed urls from covidtracking JSON API
     '/api/us/daily',
     '/api/us',
+    '/api/states/info',
+    '/api/states/daily',
+    '/api/states',
 ];
 const cacheExpiration = 1000 * 60; // Every 1 minutes
 const publicDir = path.join(__dirname, 'public');
@@ -20,8 +23,9 @@ app.get('/', (req, res) => {
 });
 
 // Set up ability to get data from covidtracking, without actually requesting it every time
-apiUrls.forEach((url) => {
-    app.get(url, async (req, res) => {
+apiUrls.forEach((baseUrl) => {
+    app.get(baseUrl, async (req, res) => {
+        let url = req.url;
         var cacheEntry = cachedStats.get(url);
         try {
             if (!cacheEntry || Date.now() - cacheEntry.lastCacheTime > cacheExpiration) {
