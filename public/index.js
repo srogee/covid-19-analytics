@@ -8,6 +8,8 @@ const colors = [
 ];
 
 const delay = 0;
+Chart.defaults.global.defaultFontFamily = "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', sans-serif"; // Same as Bootstrap
+Chart.defaults.global.defaultFontSize = 16; // Also same as Bootstrap for the most part
 
 // Variables
 let chart = null;
@@ -113,7 +115,7 @@ function updateChart(data) {
                     yAxes: [{
                         scaleLabel: {
                             display: true,
-                            labelString: 'Test Results'
+                            labelString: 'Cumulative test results'
                         },
                         ticks: {
                             beginAtZero: true,
