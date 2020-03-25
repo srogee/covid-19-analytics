@@ -3,7 +3,7 @@ const request = require('request-promise-native');
 const path = require('path');
 
 const app = express();
-const port = 9999;
+const port = process.env.PORT || 3000;
 const apiUrl = 'https://covidtracking.com/api/us/daily';
 const cacheExpiration = 1000 * 60 * 10; // Every 10 minutes
 const publicDir = path.join(__dirname, 'public');
