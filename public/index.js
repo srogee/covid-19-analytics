@@ -106,10 +106,6 @@ function updateChart(data) {
                             parser: timeFormat,
                             minUnit: 'day',
                             stepSize: 2
-                        },
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Date'
                         }
                     }],
                     yAxes: [{
