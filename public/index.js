@@ -73,20 +73,26 @@ function updateChart(data) {
                         data: data.positive,
                         fill: false,
                         borderColor: colors[0],
-                        lineTension: 0
+                        lineTension: 0.1,
+                        pointHitRadius: 6,
+                        pointHoverRadius: 6
                     },
                     {
                         label: "Negative",
                         data: data.negative,
                         fill: false,
                         borderColor: colors[3],
-                        lineTension: 0
+                        lineTension: 0.1,
+                        pointHitRadius: 6,
+                        pointHoverRadius: 6
                     },
                     {
                         label: "Total",
                         data: data.total,
                         fill: false,
-                        lineTension: 0
+                        lineTension: 0.1,
+                        pointHitRadius: 6,
+                        pointHoverRadius: 6
                     }
                 ]
             },
