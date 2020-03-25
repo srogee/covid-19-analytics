@@ -115,6 +115,7 @@ function updateChart(data) {
                         },
                         ticks: {
                             beginAtZero: true,
+                            precision: 0, // Only integers!
                             userCallback: function(value, index, values) {
                                 return value.toLocaleString();   // this is all we need
                             }
