@@ -96,14 +96,12 @@ function updateChart(data) {
                         type: 'time',
                         time: {
                             parser: timeFormat,
-                            unit: 'day'
+                            minUnit: 'day',
+                            stepSize: 2
                         },
                         scaleLabel: {
                             display: true,
                             labelString: 'Date'
-                        },
-                        ticks: {
-                            source: 'data'
                         }
                     }],
                     yAxes: [{

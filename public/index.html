@@ -17,7 +17,8 @@
     <script src="index.js"></script>
 
     <div class="container">
-        <h3 class="mt-4">U.S. COVID-19 Test Results</h3>
+        <h1 class="display-4 mt-4">COVID-19 Testing in the United States</h1>
+        <hr>
         <div class="row">
             <div class="col d-flex justify-content-between">
                 <div class="d-flex align-items-center">
@@ -26,7 +27,7 @@
                 <div class="form-inline">
                     <label class="col-form-label-lg mr-3" for="stateFilter"><i class="fas fa-filter mr-2"></i>Filter</label>
                     <select class="custom-select custom-select-lg mr-2" id="stateFilter"></select>
-                    <button type="button" class="btn btn-dark btn-lg" id="refreshButton"><i
+                    <button type="button" class="btn btn-dark btn-lg mt-2" id="refreshButton"><i
                             class="fas fa-sync-alt mr-2"></i>Refresh</button>
                 </div>
             </div>
@@ -50,11 +51,11 @@
             <div class="col d-flex justify-content-center">
                 <div class="d-flex align-items-end">
                     <h1 class="display-3" id="totalText">0</h1>
-                    <p class="ml-1 text-muted">total</p>
+                    <p class="ml-1 text-muted">completed</p>
                 </div>
             </div>
         </div>
-        <hr>
+        <div class="text-center text-muted small">Note that the above numbers may not match up with what is displayed in the graph, since the data in the graph is updated on a different schedule.</div>
     </div>
 
     <footer class="footer">
